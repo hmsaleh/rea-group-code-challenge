@@ -1,21 +1,46 @@
 'use strict';
 
-module.exports = ($scope, Properties) => {
+const DEFAULT_LOGO = 'http://placehold.it/170X32';
+const DEFAULT_MAIN_IMAGE = 'http://placehold.it/640X480';
 
-    /**
-     *
-     * get properties data
-     */
-    Properties.get().then(function(res) {
-        $scope.properties = res.data;
+module.exports = ($scope, $q, Properties, ValidateProperty, PreloadImage) => {
+
+    $scope.showSpinner = true;
+
+    Properties.get().then(function (res) {
+
+        //1) get properties data
+        let properties = res.data;
+
+        //2) validate the existence of 'results' and 'saves' arrays
+        if (!properties || !Array.isArray(properties.results) || !Array.isArray(properties.saved)) {
+            console.error('properties response is not valid');
+            return;
+        }
+
+        //3) validate properties data & preload images
+        let imagesPromise = [];
+        properties.results.forEach(function (property) {
+            imagesPromise = imagesPromise.concat($scope.prepareProperty(property, properties.results));
+        });
+        properties.saved.forEach(function (property) {
+            imagesPromise = imagesPromise.concat($scope.prepareProperty(property, properties.saved));
+        });
+
+        //4) serve data
+        $q.all(imagesPromise)
+            .finally(function () {
+                $scope.properties = properties;
+                $scope.showSpinner = false;
+            });
     });
 
     /**
      *
      * @param property: Object
      */
-    $scope.addProperty = (property) => {
-        if(!$scope.isPropertySaved(property)) {
+    $scope.saveProperty = (property) => {
+        if ('object' === typeof property && !$scope.isPropertySaved(property)) {
             $scope.properties.saved.push(property);
         }
     };
@@ -23,11 +48,12 @@ module.exports = ($scope, Properties) => {
     /**
      *
      * @param property: Object
+     * @param arr: Array
      */
-    $scope.removeProperty = (property) => {
-        let propertyIndex = $scope.properties.saved.indexOf(property);
-        if(-1 !== propertyIndex) {
-            $scope.properties.saved.splice(propertyIndex, 1);
+    $scope.removeProperty = (property, arr) => {
+        let propertyIndex = arr.indexOf(property);
+        if (-1 !== propertyIndex) {
+            arr.splice(propertyIndex, 1);
         }
     };
 
@@ -38,5 +64,29 @@ module.exports = ($scope, Properties) => {
      */
     $scope.isPropertySaved = (property) => {
         return -1 !== $scope.properties.saved.indexOf(property);
+    };
+
+    /**
+     *
+     * @param property: Object
+     * @param arr: Array
+     * @returns {Array}
+     */
+    $scope.prepareProperty = (property, arr) => {
+        let imagesPromise = [];
+        if (ValidateProperty(property)) {
+            imagesPromise.push(PreloadImage(property.agency.logo)
+                .catch(function() {
+                    property.agency.logo = DEFAULT_LOGO;
+                }));
+            imagesPromise.push(PreloadImage(property.mainImage)
+                .catch(function() {
+                    property.mainImage = DEFAULT_MAIN_IMAGE;
+                }));
+        } else {
+            $scope.removeProperty(property, arr);
+            console.error('invalid property', property);
+        }
+        return imagesPromise;
     };
 };

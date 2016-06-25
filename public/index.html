@@ -22,7 +22,7 @@
             </header>
             <div>{{property.price}}</div>
             <img ng-src="{{property.mainImage}}" alt="property image"/>
-            <a href="javascript:void(0)" ng-click="addProperty(property)" ng-hide="isPropertySaved(property)">
+            <a href="javascript:void(0)" ng-click="saveProperty(property)" ng-hide="isPropertySaved(property)">
                 <i class="fa fa-plus"></i>
                 add property
             </a>
@@ -43,13 +43,17 @@
             </header>
             <div>{{property.price}}</div>
             <img ng-src="{{property.mainImage}}" alt="property image"/>
-            <a href="javascript:void(0)" ng-click="removeProperty(property)">
+            <a href="javascript:void(0)" ng-click="removeProperty(property, properties.saved)">
                 <i class="fa fa-trash"></i>
                 remove property
             </a>
         </li>
     </ul>
     <!--end of saved list-->
+
+    <div class="spinner" ng-show="showSpinner">
+        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+    </div>
 
 </div>
 <script src="js/app.js"></script>
