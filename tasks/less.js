@@ -5,7 +5,9 @@ module.exports = function less(grunt) {
     return {
         build: {
             options: {
-                cleancss: true
+                plugins: [
+                   new (require('less-plugin-clean-css'))()
+                ]
             },
             files: [{
                 expand: true,

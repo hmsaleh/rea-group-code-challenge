@@ -2,9 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>REA Properties</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="css/main.css"/>
 </head>
-<body>
+<body ng-app="ReaGroup" ng-controller="PropertiesController" ng-cloak>
+<div class="container">
 
+    <!--start of result list-->
+    <ul ng-hide="!properties.results.length">
+        <li>
+            <h2>Results</h2>
+        </li>
+        <li ng-repeat="property in properties.results"
+            style="border-color: {{property.agency.brandingColors.primary}};">
+            <header>
+                <div>#{{property.id}}</div>
+                <img ng-src="{{property.agency.logo}}" alt="agency logo"/>
+            </header>
+            <div>{{property.price}}</div>
+            <img ng-src="{{property.mainImage}}" alt="property image"/>
+            <a href="javascript:void(0)" ng-click="addProperty(property)" ng-hide="isPropertySaved(property)">
+                <i class="fa fa-plus"></i>
+                add property
+            </a>
+            <i class="fa fa-check saved" ng-hide="!isPropertySaved(property)"></i>
+        </li>
+    </ul>
+    <!--end of result list-->
+
+    <!--start of saved list-->
+    <ul ng-hide="!properties.saved.length">
+        <li>
+            <h2>Saved Properties</h2>
+        </li>
+        <li ng-repeat="property in properties.saved" style="border-color: {{property.agency.brandingColors.primary}};">
+            <header>
+                <div>#{{property.id}}</div>
+                <img ng-src="{{property.agency.logo}}" alt="agency logo"/>
+            </header>
+            <div>{{property.price}}</div>
+            <img ng-src="{{property.mainImage}}" alt="property image"/>
+            <a href="javascript:void(0)" ng-click="removeProperty(property)">
+                <i class="fa fa-trash"></i>
+                remove property
+            </a>
+        </li>
+    </ul>
+    <!--end of saved list-->
+
+</div>
+<script src="js/app.js"></script>
 </body>
 </html>
