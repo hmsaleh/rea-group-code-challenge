@@ -5,7 +5,8 @@ let validator = require('validator');
 module.exports = () => {
     return (property) => {
         try {
-            if ('object' !== typeof property || !validator.isCurrency(property.price) ||
+            if ('object' !== typeof property ||
+                !validator.isCurrency(property.price) ||
                 'object' !== typeof property.agency ||
                 'object' !== typeof property.agency.brandingColors ||
                 !validator.isHexColor(property.agency.brandingColors.primary) ||

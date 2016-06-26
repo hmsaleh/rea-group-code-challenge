@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = function ($http) {
+module.exports = ($http) => {
     /**
      *
      * request properties data
      */
-    let properties = $http.get('data/properties.json').success(function (response) {
+    let properties = $http.get('data/properties.json').success((response) => {
         return response;
     });
     return {
@@ -13,7 +13,7 @@ module.exports = function ($http) {
          *
          * @returns {*}
          */
-        get: function () {
+        get: () => {
             return properties;
         }
     };

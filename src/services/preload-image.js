@@ -2,10 +2,10 @@
 
 module.exports = ($q) => {
     return (src) => {
-        let timeout = 5000;
+        const TIMEOUT = 5000;
         var deferred = $q.defer();
         try {
-            let img = new Image();
+            let img = document.createElement('img');
             img.onload = () => {
                 deferred.resolve();
             };
@@ -13,9 +13,9 @@ module.exports = ($q) => {
                 deferred.reject('image loading failed: ' + src);
             };
             img.src = src;
-            setTimeout(function () {
-                deferred.reject('image loading timed out after ' + timeout + ' ms');
-            }, timeout);
+            setTimeout(() => {
+                deferred.reject('image loading timed out after ' + TIMEOUT + ' ms');
+            }, TIMEOUT);
         } catch (error) {
             deferred.reject('image loading failed: ' + src);
         }
